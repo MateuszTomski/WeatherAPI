@@ -19,15 +19,15 @@ def main_menu(city_name):
     ).ask()
 
     if choice == "Podaj obecna pogode":
-        print(current_weather(city_name))
+        print(get_weather(city_name, wheather_format=WeatherFormat.current))
 
     elif choice == "Podaj pogode na dzisiaj":
-        print(daily_weather(city_name))
+        print(get_weather(city_name, wheather_format=WeatherFormat.daily))
 
     elif choice == "Podaj pogode na 5 kolejnych dni":
-        dni = five_days_format(city_name)
-        for pogoda in dni:
-            print(pogoda)
+        days = days_format(city_name)
+        for weather in days:
+            print(weather)
 
 
     elif choice == "Podaj inne miasto":
@@ -37,6 +37,8 @@ def main_menu(city_name):
         sys.exit()
 
     return city_name
+
+
 
 
 
