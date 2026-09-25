@@ -12,22 +12,26 @@ def main_menu(city_name):
         choices=[
             "Podaj obecna pogode",
             "Podaj pogode na dzisiaj",
-            "Podaj pogode na 5 kolejnych dni",
+            "Podaj pogode na jutro",
+            "Podaj pogode na 3 kolejne dni",
             "Podaj inne miasto",
             "Wyjdz"
         ]
     ).ask()
 
     if choice == "Podaj obecna pogode":
-        print(get_weather(city_name, wheather_format=WeatherFormat.current))
+        get_weather(city_name, wheather_format=WeatherFormat.current)
 
     elif choice == "Podaj pogode na dzisiaj":
-        print(get_weather(city_name, wheather_format=WeatherFormat.daily))
+        get_weather(city_name, wheather_format=WeatherFormat.daily)
 
-    elif choice == "Podaj pogode na 5 kolejnych dni":
-        days = days_format(city_name)
-        for weather in days:
-            print(weather)
+    elif choice == "Podaj pogode na jutro":
+        get_tommorows_weather(city_name)
+    
+    
+    elif choice == "Podaj pogode na 3 kolejne dni":
+        get_weather_for_multiple_days(city_name, days=3)
+
 
 
     elif choice == "Podaj inne miasto":
