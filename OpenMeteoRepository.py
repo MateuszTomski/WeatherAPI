@@ -12,13 +12,19 @@ class OpenMeteoGeo:
         self.wynik = data.json()
 
 
-    def get_city_info(self) -> list:
-        return [WeatherGeo.model_validate(city) for city in self.wynik['results']]
+    def get_city_info_list(self) -> list[WeatherGeoList]:
+        return[WeatherGeoList.model_validate(city) for city in self.wynik['results']]
 
-    def get_city_cordinates(self) -> tuple:
-        coridnates_data = (WeatherGeo.model_validate(values) for values in self.wynik['results'])
-        for cordinates in coridnates_data:
-            return cordinates.latitude, cordinates.longitude
+
+    def get_city_cordinates(self):
+        city_info = [WeatherGeo.model_validate(city) for city in self.wynik['results']]
+        for info in city_info:
+            return info.latitude, info.latitude, info.country_code
+
+
+
+        
+
 
 class OpenMeteoWeather: 
     def __init__(self, latitude: float, longitude: float) -> Weather:
