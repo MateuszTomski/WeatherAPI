@@ -27,18 +27,22 @@ class OpenMeteoGeo:
 
 
 class OpenMeteoWeather: 
-    def __init__(self, latitude: float, longitude: float) -> Weather:
+    def __init__(self, latitude: float, longitude: float, forecast_days: int = 7) -> WeatherResponse:
         base_url = f"https://api.open-meteo.com/v1/forecast?"
         params = {
             "latitude": latitude,
             "longitude": longitude,
-            "daily": ["temperature_2m_max", "temperature_2m_min", "weather_code"],
-            "hourly": ["temperature_2m", "rain", "weather_code", "wind_speed_10m", "snowfall", "showers"],
-            "current": ["temperature_2m","rain","snowfall","showers","weather_code","wind_speed_10m","is_day"]
+            "forecast_days": forecast_days,
+            "daily": WeatherFormatParams.daily.value,
+            "hourly": WeatherFormatParams.hourly.value,
+            "current": WeatherFormatParams.current.value
         }
         data = requests.get(base_url, params)
         self.wynik = data.json()
 
     def get_city_weather_info(self):
-        return Weather.model_validate(self.wynik)
+        return WeatherResponse.model_validate(self.wynik)
 
+# kielce = OpenMeteoGeo("Kielce").get_city_cordinates()
+# kielce2 =  OpenMeteoWeather(kielce[0], kielce[1]).get_city_weather_info()
+# print(kielce2)

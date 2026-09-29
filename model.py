@@ -47,24 +47,55 @@ class DayNight(Enum):
         if values == 0:
             return cls.night.value
 
-
-class WeatherUnitsDaily(BaseModel):
-    temperature_unit_max : str = Field(alias="temperature_2m_max")
-    temperature_unit_min : str = Field(alias="temperature_2m_min") 
-
-
-class WeatherDaily(BaseModel):
-    time: list[str]
-    temperature_max: list[float] = Field(alias="temperature_2m_max")
-    temperature_min: list[float] = Field(alias="temperature_2m_min")
+class WeatherDailyRequest(BaseModel):
+    temperature_2m_max: list[float]
+    temperature_2m_min: list[float]
     weather_code: list[int]
 
-class WeatherUnitCurrent(BaseModel):
-    temperature_unit : str = Field(alias="temperature_2m")
-    wind_speed: str = Field(alias="wind_speed_10m")
+class WeatherHourlyRequest(BaseModel):
+    temperature_2m: list[float]
+    rain: list[float]
+    showers: list[float]
+    snowfall: list[float]
+    snow_depth: list[float] | None = None
+    weather_code: list[int]
+    wind_speed_10m: list[float]
+    visibility: list[float] | None = None
+    cloud_cover: list[int] | None = None
+
+class WeatherCurrentRequest(BaseModel):
+    temperature_2m: float
+    rain: float
+    snowfall: float
+    showers: float
+    weather_code: int
+    wind_speed_10m: float
+    is_day: int
+
+class WeatherDailyResponse(BaseModel):
+    time: list[str]
+    temperature_2m_max: list[float]
+    temperature_2m_min: list[float]
+    weather_code: list[int]
+
+class WeatherUnitsDailyResponse(BaseModel):
+    temperature_2m_max : str
+    temperature_2m_min : str
 
 
-class WeatherCurrent(BaseModel):
+class WeatherHourlyResponse(BaseModel):
+    time: list[str]
+    temperature_2m: list[float]
+    rain: list[float]
+    showers: list[float]
+    snowfall: list[float]
+    snow_depth: list[float] | None = None
+    weather_code: list[int]
+    wind_speed_10m: list[float]
+    visibility: list[float] | None = None
+    cloud_cover: list[int] | None = None
+
+class WeatherCurrentResponse(BaseModel):
     time: str
     temperature_2m: float
     rain: float
@@ -73,6 +104,30 @@ class WeatherCurrent(BaseModel):
     weather_code: int
     wind_speed_10m: float
     is_day: int
+
+
+
+
+class WeatherUnitCurrentResponse(BaseModel):
+    temperature_unit : str = Field(alias="temperature_2m")
+    wind_speed: str = Field(alias="wind_speed_10m")
+
+class WeatherResponse(BaseModel):
+    latitude: float
+    longitude: float
+    hourly: WeatherHourlyResponse
+    current: WeatherCurrentResponse
+    current_units: WeatherUnitCurrentResponse
+    daily: WeatherDailyResponse
+    daily_units: WeatherUnitsDailyResponse
+
+
+class WeatherFormatParams(Enum):
+    hourly = ",".join(WeatherHourlyRequest.model_fields.keys())
+    current = ",".join(WeatherCurrentRequest.model_fields.keys())
+    daily = ",".join(WeatherDailyRequest.model_fields.keys())
+    
+
 
 class WeatherGeo(BaseModel):
     name: str 
@@ -89,21 +144,12 @@ class WeatherGeoList(BaseModel):
     country: str
     country_code: str
 
-
-
 class WeatherDay(BaseModel):
     time: str
     temperature_max: float
     temperature_min: float
     weather_code: int
 
-class Weather(BaseModel):
-    latitude: float
-    longitude: float
-    current: WeatherCurrent
-    daily: WeatherDaily
-    daily_units: WeatherUnitsDaily 
-    current_units: WeatherUnitCurrent
 
 
 
@@ -153,15 +199,15 @@ class CityTemperature(BaseModel):
 class WeatherStringFormat():
 
     @staticmethod
-    def daily_weather_format(city_name: str , weather: Weather, country_code : str) -> str:
+    def daily_weather_format(city_name: str , weather: WeatherDailyResponse, country_code : str) -> str:
         print(f"Pogoda na dzisiaj w {country_code} {city_name} \nData: {weather.daily.time[0]} \nMaksymalna Temperatura: {weather.daily.temperature_max[0]}{weather.daily_units.temperature_unit_max} \nNajnizsza Temperatura {weather.daily.temperature_min[0]}{weather.daily_units.temperature_unit_max} \nPogoda: {WeatherCode.get_values(weather.daily.weather_code)}")
 
     @staticmethod
-    def current_weather_format(city_name: str , weather: Weather, country_code : str) -> str:
+    def current_weather_format(city_name: str , weather: WeatherDailyResponse, country_code : str) -> str:
         print(f"Obecna pogoda w {country_code} {city_name}, Czas: {weather.current.time}, Temperatura: {weather.current.temperature_2m}{weather.current_units.temperature_unit}, Deszcz {weather.current.rain}, Snieg {weather.current.snowfall}, Mzawka {weather.current.showers}, Pogoda: {WeatherCode.get_values(weather.current.weather_code)}, Pora Dnia: {DayNight.get_values(weather.current.is_day)}")
 
     @staticmethod
-    def tommorow_weather_format(city_name : str, weather: Weather, country_code : str) -> str:
+    def tommorow_weather_format(city_name : str, weather: WeatherDailyResponse, country_code : str) -> str:
         print(f"Pogoda na jutro w {country_code} {city_name} \nData: {weather.daily.time[1]} \nMaksymalna Temperatura: {weather.daily.temperature_max[1]}{weather.daily_units.temperature_unit_max} \nNajnizsza Temperatura {weather.daily.temperature_min[1]}{weather.daily_units.temperature_unit_max} \nPogoda: {WeatherCode.get_values(weather.daily.weather_code)}")
 
     @staticmethod
