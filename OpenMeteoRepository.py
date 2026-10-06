@@ -1,5 +1,5 @@
 import requests
-from model import *
+from model.OpenMeteoModel import *
 
 class OpenMeteoGeo:
     def __init__(self,city_name: str, count: int =10, language: str="en"):
@@ -21,6 +21,8 @@ class OpenMeteoGeo:
         for info in city_info:
             return info.latitude, info.latitude, info.country_code
 
+    def get_weather_for_api(self):
+        return [WeatherGeoForAPI.model_validate(city) for city in self.wynik['results']]
 
 
         
@@ -33,16 +35,26 @@ class OpenMeteoWeather:
             "latitude": latitude,
             "longitude": longitude,
             "forecast_days": forecast_days,
-            "daily": WeatherFormatParams.daily.value,
-            "hourly": WeatherFormatParams.hourly.value,
-            "current": WeatherFormatParams.current.value
+            "daily": WeatherRequestParams.daily.value,
+            "hourly": WeatherRequestParams.hourly.value,
+            "current": WeatherRequestParams.current.value
         }
         data = requests.get(base_url, params)
         self.wynik = data.json()
+        self.wynik_model = WeatherResponse.model_validate(self.wynik)
 
     def get_city_weather_info(self):
-        return WeatherResponse.model_validate(self.wynik)
+        return self.wynik_model
 
-# kielce = OpenMeteoGeo("Kielce").get_city_cordinates()
-# kielce2 =  OpenMeteoWeather(kielce[0], kielce[1]).get_city_weather_info()
-# print(kielce2)
+    def get_current_weather(self):
+        return self.wynik_model.current
+
+    def get_hourly_weather(self):
+        return self.wynik_model.hourly
+
+    def get_daily_weather(self):
+        return self.wynik_model.daily
+
+
+kielce = OpenMeteoGeo("Kielce").get_weather_for_api()
+print(kielce)

@@ -1,63 +1,44 @@
 from OpenMeteoRepository import *
+from model.OpenMeteoModel import *
 
-def get_weather(city_name: str, wheather_format: WeatherFormat):
-    cordinates = OpenMeteoGeo(city_name=city_name).get_city_cordinates()
-    city_weather = OpenMeteoWeather(latitude=cordinates[0], longitude=cordinates[1]).get_city_weather_info()
-    country_code = cordinates[2]
+def get_weather_for_city(city_name: str):
+    city_coridantes = OpenMeteoGeo(city_name=city_name).get_city_cordinates()
+    city_weather = OpenMeteoWeather(latitude=city_coridantes[0], longitude=city_coridantes[1]).get_city_weather_info()
+    country_code = city_coridantes[2]
+
+    return city_weather, country_code
+
+def get_weather_object(city_name: str, weather_format: WeatherFormat):
+    city_cordinates = OpenMeteoGeo(city_name).get_city_cordinates()
     
     
-    if wheather_format == wheather_format.dadily:
-        return WeatherStringFormat.daily_weather_format(city_name, city_weather, country_code)
-    elif wheather_format == wheather_format.current:
-        return WeatherStringFormat.current_weather_format(city_name, city_weather, country_code)
+    if weather_format == WeatherFormat.daily:
+        weather_object_daily = OpenMeteoWeather(latitude=city_cordinates[0], longitude=city_cordinates[1])
+        return weather_object_daily.wynik
+    elif weather_format == WeatherFormat.hourly:
+        weather_object_hourly = OpenMeteoWeather(latitude=city_cordinates[0], longitude=city_cordinates[1]).get_hourly_weather()
+        return weather_object_hourly
+    elif weather_format == WeatherFormat.current:
+        weather_object_current = OpenMeteoWeather(latitude=city_cordinates[0], longitude=city_cordinates[1]).get_current_weather()
+        return weather_object_current
 
 
-def get_tommorows_weather(city_name : str):
-    cordinates = OpenMeteoGeo(city_name=city_name).get_city_cordinates()
-    city_weather = OpenMeteoWeather(latitude=cordinates[0], longitude=cordinates[1]).get_city_weather_info()
-    country_code = cordinates[2]
 
-    return WeatherStringFormat.tommorow_weather_format(city_name , city_weather, country_code)
+def get_weather_for_tommorow(city_name: str, weather_format: WeatherFormat):
+    city_weather, _ = get_weather_for_city(city_name)
+    weather_for_city_tommorow = WeatherDay.convert(weather_response=city_weather, day=1)
+    return weather_for_city_tommorow
 
-def compare_weather(city_name: str, second_city_name: str, day: int = 0):
-    cordinates_city_one = OpenMeteoGeo(city_name=city_name).get_city_cordinates()
-    weather_for_city_one = OpenMeteoWeather(latitude=cordinates_city_one[0], longitude=cordinates_city_one[1]).get_city_weather_info()
-    country_code_city_one = cordinates_city_one[2]
-    avarage_temperature_city_one = weather_for_city_one.daily.temperature_2m_max[day] + weather_for_city_one.daily.temperature_2m_max[day] 
-    
-    cordinates_city_two = OpenMeteoGeo(city_name=second_city_name).get_city_cordinates()
-    weather_for_city_two = OpenMeteoWeather(latitude=cordinates_city_two[0], longitude=cordinates_city_two[1]).get_city_weather_info()
-    country_code_city_two = cordinates_city_two[2]
-    avarage_temperature_city_two = weather_for_city_two.daily.temperature_2m_max[day] + weather_for_city_two.daily.temperature_2m_max[day]
-    
-    first_city_info = CityTemperature(name=city_name, country_code=country_code_city_one, avarage_temperature=avarage_temperature_city_one)
-    second_city_info = CityTemperature(name=second_city_name, country_code=country_code_city_two, avarage_temperature=avarage_temperature_city_two)
-    
-    return WeatherStringFormat.compare_temperature(first_city_info, second_city_info)
 
-def get_days_weather(city_name: str, days: int = 3) -> list[WeatherDay]:
 
-    cordinates = OpenMeteoGeo(city_name=city_name).get_city_cordinates()
-    city_weather = OpenMeteoWeather(latitude=cordinates[0], longitude=cordinates[1]).get_city_weather_info()
-    country_code = cordinates[2]
 
-    daily = city_weather.daily
 
-    return [
-        WeatherDay(
-            time=daily.time[i],
-            temperature_max=daily.temperature_2m_max[i],
-            temperature_min=daily.temperature_2m_min[i],
-            weather_code=daily.weather_code[i]
-        )
-        for i in range(days)
-    ], country_code
+def get_weather_for_days():
+    pass
 
-def get_weather_for_multiple_days(city_name: str , days: int = 3 ):
-    list_days_weather, country_code = get_days_weather(city_name, days)
-    
-    return WeatherStringFormat.multiple_days_weather_format(city_name, days, list_days_weather, country_code)
+def get_compared_weather():
+    pass
 
-compare_weather("Chicago", "Kielce", day=3)
+print(get_weather_for_tommorow("Wroclaw", weather_format=WeatherFormat.daily))
 
-    
+

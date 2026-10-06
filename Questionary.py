@@ -1,6 +1,6 @@
 from questionary import *
 import questionary
-from OpenMeteoService import *
+from QuestionaryService import *
 import sys
 
 Choice
