@@ -94,8 +94,8 @@ def WeatherAPI_CurrentDayWeatherAPIDay(city_name: str, city_id: int, days = 7, h
 
 
 
-x = WeatherAPI_CurrentDayWeatherAPIDay("Kielce", city_id=769250)
-print(x)
+# x = WeatherAPI_CurrentDayWeatherAPIDay("Kielce", city_id=769250)
+# print(x)
 
 # for y in x:
 #     print(y[1])
