@@ -21,7 +21,7 @@ class OpenMeteoGeo:
         for info in city_info:
             return info.latitude, info.latitude, info.country_code
 
-    def get_weather_for_api(self):
+    def get_city_list(self):
         return [WeatherGeoForAPI.model_validate(city) for city in self.wynik['results']]
 
 
@@ -56,5 +56,9 @@ class OpenMeteoWeather:
         return self.wynik_model.daily
 
 
-kielce = OpenMeteoGeo("Kielce").get_weather_for_api()
-print(kielce)
+# kielce1 = OpenMeteoGeo("kielce").get_city_cordinates()
+# kielce = OpenMeteoWeather(latitude=kielce1[0], longitude=kielce1[1]).get_daily_weather()
+# print(kielce)
+
+# kielce = OpenMeteoGeo("Kielce").get_city_list()
+# print(kielce)

@@ -2,9 +2,7 @@ from pydantic import BaseModel
 
 class HourlyWeatherAPI(BaseModel):
     time: str
-    max_temperature: float
-    min_temperature: float
-    avarage_temperature: float
+    temperature: float
     wind_speed: float
     rain: float
     showers: float
@@ -12,12 +10,13 @@ class HourlyWeatherAPI(BaseModel):
     snow_depth: float
     cloud_cover: float
     weather_code: int
+    visibility: float
 
 
 class DailyWeatherAPI(BaseModel):
     time: str
-    temperature_2m_max: float
-    temperature_2m_min: float
+    temperature_max: float
+    temperature_min: float
     avarage_tempearture: float
     weather_code: int
 
@@ -33,6 +32,7 @@ class CurrentWeatherAPI(BaseModel):
 
 class CityInfoAPI(BaseModel):
     id: int
+    name: str
     country: str
     country_code: str
     country_id: int

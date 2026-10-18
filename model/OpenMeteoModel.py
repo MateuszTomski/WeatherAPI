@@ -140,6 +140,7 @@ class WeatherGeoList(BaseModel):
 
 class WeatherGeoForAPI(BaseModel):
     id: int
+    name: str
     country: str
     country_code: str
     country_id: int
