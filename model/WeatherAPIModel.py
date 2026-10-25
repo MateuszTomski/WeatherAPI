@@ -46,6 +46,6 @@ class WeatherDayAPI(BaseModel):
     name: str
     date: str
     city_info: CityInfoAPI
-    current_weather: CurrentWeatherAPI
+    current_weather: CurrentWeatherAPI | None = None
     hourly_weather: list[HourlyWeatherAPI]
     daily_weather: DailyWeatherAPI

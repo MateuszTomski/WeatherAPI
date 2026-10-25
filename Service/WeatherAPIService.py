@@ -2,6 +2,7 @@ from OpenMeteoRepository import *
 from model.WeatherAPIModel import *
 import pendulum
 
+
 def WeatherAPIHourly_Service(city_name: str, hours: int = 24) -> HourlyWeatherAPI:
     get_city_cordinates = OpenMeteoGeo(city_name=city_name).get_city_cordinates()
     get_hourly_weather = OpenMeteoWeather(latitude=get_city_cordinates[0], longitude=get_city_cordinates[1]).get_hourly_weather()
@@ -89,7 +90,20 @@ def WeatherAPI_CurrentDayWeatherAPIDay(city_name: str, city_id: int, days = 7, h
         daily_weather=daily[0]
     )
 
-
+def WeatherAPI_TommorowDayWeatherAPIDay(city_name: str, city_id: int, days = 7, hours = 48) -> WeatherDayAPI:
+    city = WeatherAPI_SpecificCityInfo(city_name , city_id)
+    city_info = WeatherAPI_CityInfo(city.name, city.id)
+    hourly = WeatherAPIHourly_Service(city.name, hours)
+    daily = WeatherAPIDaily_Service(city.name, days)
+    date_pendulum = pendulum.tomorrow()
+    
+    return WeatherDayAPI(
+        name=city.name,
+        date=str(date_pendulum.date()),
+        city_info=city_info,
+        hourly_weather=hourly[24:48],
+        daily_weather=daily[1]
+    )
 
 
 
